@@ -1,3 +1,9 @@
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import org.json.JSONObject;
 import spark.ModelAndView;
 import spark.template.jade.JadeTemplateEngine;
 import com.google.common.io.ByteStreams;
@@ -6,6 +12,7 @@ import com.google.common.net.MediaType;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static spark.Spark.*;
@@ -15,9 +22,7 @@ public class App {
         port(1337);
         threadPool(8);
 
-        Map<String, String> map = new HashMap<>();
-        map.put("title", "Hearthstone App");
-        get("/", (req, res) -> new ModelAndView(map,"App.jade"), new JadeTemplateEngine());
+        get("/", (req, res) -> new ModelAndView(content(),"App.jade"), new JadeTemplateEngine());
 
         get("/favicon.ico", (req, res) -> {
             try {
@@ -42,5 +47,24 @@ public class App {
                 return ex.getMessage();
             }
         });
+    }
+
+    private static Map<String, String> content() {
+        Map<String, String> map = new HashMap<>();
+        map.put("title", "Hearthstone App");
+        try {
+            String search = "Frog";
+            HttpResponse<JsonNode> response = Unirest.get("https://omgvamp-hearthstone-v1.p.mashape.com/cards/search/"+search)
+                    .header("X-Mashape-Key", "fmzbntRqkFmshCSZBJk2203AN8Ybp1KGrcijsnaHeDRpsXG9if")
+                    .asJson();
+            System.out.println(response.getBody());
+
+
+
+
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 }
