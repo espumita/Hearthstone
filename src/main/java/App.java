@@ -19,7 +19,6 @@ public class App {
         map.put("title", "Hearthstone App");
         get("/", (req, res) -> new ModelAndView(map,"App.jade"), new JadeTemplateEngine());
 
-
         get("/favicon.ico", (req, res) -> {
             try {
                 InputStream inputStream = null;
