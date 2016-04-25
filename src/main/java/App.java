@@ -1,6 +1,5 @@
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
@@ -13,12 +12,7 @@ import com.google.common.net.MediaType;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static spark.Spark.*;
 
@@ -65,11 +59,34 @@ public class App {
                     .header("X-Mashape-Key", "fmzbntRqkFmshCSZBJk2203AN8Ybp1KGrcijsnaHeDRpsXG9if")
                     .asJson();
             System.out.println(response.getBody());
-            map.put("img", ((JSONObject) response.getBody().getArray().get(0)).get("img").toString());
+            map.put("img", jsonMap(response,"img"));
+            map.put("race", jsonMap(response,"race"));
+            map.put("health", jsonMap(response,"health"));
+            map.put("type", jsonMap(response,"type"));
+            map.put("locale", jsonMap(response,"locale"));
+            map.put("cardSet", jsonMap(response,"cardSet"));
+            map.put("attack", jsonMap(response,"attack"));
+            map.put("cardId", jsonMap(response,"cardId"));
+            map.put("faction", jsonMap(response,"faction"));
+            map.put("name", jsonMap(response,"name"));
+            map.put("imgGold", jsonMap(response,"imgGold"));
+            map.put("text", jsonMap(response,"text"));
+            map.put("rarity", jsonMap(response,"rarity"));
+            map.put("cost", jsonMap(response,"cost"));
         } catch (UnirestException e) {
             e.printStackTrace();
         }
         return map;
+    }
+
+    private static String jsonMap(HttpResponse<JsonNode> response, String key) {
+        String valueMapped = "";
+        try {
+            valueMapped = ((JSONObject) response.getBody().getArray().get(0)).get(key).toString();
+        }catch (Exception e){
+            valueMapped = "none";
+        }
+        return valueMapped;
     }
 
     private static Map<String, String> content() {
